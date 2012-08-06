@@ -1,96 +1,89 @@
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-Ext.define('WebNoteDemo.view.NoteEditor', {
-    extend: 'Ext.form.Panel',
-    xtype: 'editor',
-    
-//    requires: [
-//        'WebNoteDemo.view.NoteContent'
-//    ],
-    
+Ext.define("NotesApp.view.NoteEditor", {
+    extend: "Ext.form.Panel",
+    requires: "Ext.form.FieldSet",
+    alias: "widget.noteeditorview",
     config: {
+        scrollable: 'vertical',
         items: [
             {
-                xtype: 'toolbar',
-                docked: 'top',
-                title: 'create',
+                xtype: "toolbar",
+                docked: "top",
+                title: "Edit Note",
                 items: [
                     {
-                        xtype: 'button',
-                        id: 'btn-back-note',
-                        ui: 'back',
-                        text: 'home',
-                        handler: function () {
-                         
-                           Ext.Viewport.setActiveItem({ xtype: 'notecontent'},{type:'slide',direction:'right'});
-                        }
+                        xtype: "button",
+                        ui: "back",
+                        text: "Home",
+                        itemId: "backButton"
                     },
+                    { xtype: "spacer" },
                     {
-                        xtype: 'spacer'
-                    },
-                    {
-                        xtype: 'button',
-                        id: 'btn-save-note',
-                        ui: 'action',
-                        text: 'save',
-                        
-                        handler: function () {
-                         
-                           Ext.Viewport.setActiveItem({ xtype:  'notecontent'},{type:'slide',direction:'right'});
-                        }
+                        xtype: "button",
+                        ui: "action",
+                        text: "Save",
+                        itemId: "saveButton"
                     }
                 ]
             },
             {
-                xtype: 'toolbar',
-                docked: 'bottom',
+                xtype: "toolbar",
+                docked: "bottom",
                 items: [
+                    { xtype: "spacer" },
                     {
-                        xtype: 'spacer'
-                    },
-                    {
-                        xtype: 'button',
-                        iconCls: 'trash',
+                        xtype: "button",
+                        iconCls: "trash",
                         iconMask: true,
-                        text: '',
-                        
-                        handler: function () {
-                         
-                           Ext.Viewport.setActiveItem({ xtype:  'notecontent'},{type:'slide',direction:'right'});
-                        }
+                        itemId: "deleteButton"
                     }
                 ]
             },
+            { xtype: "fieldset",
+                items: [
+                    {
+                        xtype: 'textfield',
+                        name: 'title',
+                        label: 'Title',
+                        required: true
+                    },
+                    {
+                        xtype: 'textareafield',
+                        name: 'narrative',
+                        label: 'Narrative'
+                    }
+                ]
+            }
+        ],
+        listeners: [
             {
-                xtype: 'textfield',
-                label: 'name:',
-                labelWidth: 0
+                delegate: "#backButton",
+                event: "tap",
+                fn: "onBackButtonTap"
             },
             {
-                xtype: 'spacer',
-                height: 26,
-                width: 281
+                delegate: "#saveButton",
+                event: "tap",
+                fn: "onSaveButtonTap"
             },
             {
-                xtype: 'textareafield',
-                label: ''
-            },
-            {
-                xtype: 'spacer',
-                docked: 'bottom',
-                height: 10,
-                width: 286
+                delegate: "#deleteButton",
+                event: "tap",
+                fn: "onDeleteButtonTap"
             }
         ]
+    },
+    onSaveButtonTap: function () {
+        console.log("saveNoteCommand");
+        this.fireEvent("saveNoteCommand", this);
+    },
+    onDeleteButtonTap: function () {
+        console.log("deleteNoteCommand");
+        this.fireEvent("deleteNoteCommand", this);
+    },
+    onBackButtonTap: function () {
+        console.log("backToHomeCommand");
+        this.fireEvent("backToHomeCommand", this);
     }
 
 });
-
-
-
-
-
 

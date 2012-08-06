@@ -1,13 +1,15 @@
 Ext.application({
-    name: 'WebNoteDemo',
 
     requires: [
         'Ext.MessageBox'
     ],
 
-    models:['NoteDataModel'],
-    views: ['NoteContent','NoteEditor'],
-    stores:['NoteStore'],
+    name: "NotesApp",
+
+    models: ["Note","Token"],
+    stores: ["Notes","Tokens"],
+    controllers: ["Notes"],
+    views: ["NotesList", "NoteEditor","Login"],
 
     icon: {
         '57': 'resources/icons/Icon.png',
@@ -30,18 +32,19 @@ Ext.application({
     launch: function() {
         // Destroy the #appLoadingIndicator element
         Ext.fly('appLoadingIndicator').destroy();
+ 
+        var login = {
+            xtype:"loginview"
+        };
+        var notesListView = {
+            xtype: "noteslistview"
+        };
+        var noteEditorView = {
+            xtype: "noteeditorview"
+        };
 
-        // Initialize the main view
-        var content = Ext.create('WebNoteDemo.view.NoteContent');
-        var editor = Ext.create('WebNoteDemo.view.NoteEditor');
-      
-        var mainPanel = Ext.create('Ext.Panel', {
-            
-            fullscreen: true,
-            layout : 'card',
-            cardAnimation:'slide',
-            items:[content,editor]           
-        })
+        Ext.Viewport.add([login,notesListView, noteEditorView]);
+
     },
 
     onUpdated: function() {
