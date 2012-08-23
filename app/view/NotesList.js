@@ -8,14 +8,16 @@ Ext.define("NotesApp.view.NotesList", {
             type: 'fit'
         },
         items: [{
-            xtype: "toolbar",
-            title: "Note",
-            docked: "top",
+                
+            xtype: 'toolbar',
+            docked: 'top',
+            title: '云端记事本',
+
             items: [
                 { xtype: 'spacer' },
                 {
                     xtype: "button",
-                    text: 'New',
+                    text: '创建',
                     ui: 'action',
                     itemId: "newButton"
                 }

@@ -8,19 +8,19 @@ Ext.define("NotesApp.view.NoteEditor", {
             {
                 xtype: "toolbar",
                 docked: "top",
-                title: "Edit Note",
+                title: "日志",
                 items: [
                     {
                         xtype: "button",
                         ui: "back",
-                        text: "Home",
+                        text: "返回",
                         itemId: "backButton"
                     },
                     { xtype: "spacer" },
                     {
                         xtype: "button",
                         ui: "action",
-                        text: "Save",
+                        text: "保存",
                         itemId: "saveButton"
                     }
                 ]

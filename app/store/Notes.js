@@ -3,10 +3,10 @@ Ext.define("NotesApp.store.Notes", {
     requires: "Ext.data.proxy.LocalStorage",
     config: {
         model: "NotesApp.model.Note",
-        proxy: {
-            type: 'localstorage',
-            id: 'notes-app-store'
-        },
+//        proxy: {
+//            type: 'localstorage',
+//            id: 'notes-app-store'
+//        },
         sorters: [{ property: 'dateCreated', direction: 'DESC'}],
         grouper: {
             sortProperty: "dateCreated",

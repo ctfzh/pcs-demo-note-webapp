@@ -4,6 +4,7 @@ Ext.define("NotesApp.model.Note", {
         idProperty: 'id',
         fields: [
             { name: 'id', type: 'int' },
+            { name : 'flag', type: 'int'},
             { name: 'dateCreated', type: 'date', dateFormat: 'c' },
             { name: 'title', type: 'string' },
             { name: 'narrative', type: 'string' }
