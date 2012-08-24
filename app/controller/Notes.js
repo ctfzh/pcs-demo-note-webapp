@@ -56,15 +56,14 @@ Ext.define("NotesApp.controller.Notes", {
         var notesStore = Ext.getStore("Notes");
         var  narrative ;
         
-        console.log("this is debug 1");
-        
+        //use baidu OAuth js sdk 
         baidu.require('connect', function(connect){
                 connect.init( '48FTB4PjV71jlCifBllSe50W',{
 			status:true
 		});
 				   			
                 connect.login(function(info){
-                        access_token = info.session.access_token;//获取access_token
+                        access_token = info.session.access_token;//get access_token
                         
                         //store access_token 
                         var tokenStore = Ext.getStore("Tokens");
