@@ -9695,7 +9695,7 @@ input[type="search"]::-webkit-search-cancel-button {
   }
 }
 
-﻿.list-item-title
+.list-item-title
 {
     float:left;
     width:100%;
@@ -9711,8 +9711,8 @@ input[type="search"]::-webkit-search-cancel-button {
     color:#666666;
     font-size:80%;
     white-space: nowrap;  
-    overflow: hidden;  
-    text-overflow: ellipsis;  
+  
+
 }
 .x-item-selected .list-item-title 
 {

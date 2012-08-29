@@ -44,12 +44,13 @@ Ext.define("NotesApp.view.NoteEditor", {
                         xtype: 'textfield',
                         name: 'title',
                         label: 'Title',
+						labelWidth: 0,
                         required: true
                     },
                     {
                         xtype: 'textareafield',
+						maxRows: 20,
                         name: 'narrative',
-                        label: 'Narrative'
                     }
                 ]
             }

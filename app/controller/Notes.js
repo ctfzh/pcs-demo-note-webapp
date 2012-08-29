@@ -18,6 +18,7 @@ Ext.define("NotesApp.controller.Notes", {
             },
             notesListView: {
                 // The commands fired by the notes list container.
+				refreshNoteCommand: "onRefreshNoteCommand",
                 newNoteCommand: "onNewNoteCommand",
                 editNoteCommand: "onEditNoteCommand"
             },
@@ -47,8 +48,98 @@ Ext.define("NotesApp.controller.Notes", {
     activateNotesList: function () {
         Ext.Viewport.animateActiveItem(this.getNotesListView(), this.slideRightTransition);
     },
+	
+	refreshNoteList: function(){
+	
+		var notesStore = Ext.getStore("Notes");
+        var  narrative ;
+		
+		notesStore. removeAll();
+		
+		Ext.data.JsonP.request({
+            url: 'https://pcs.baidu.com/rest/2.0/pcs/file',
+            callbackKey: 'callback',
+            params: {
+                access_token : access_token,
+                method: 'list',
+                path: '/apps/云端记事本'
+            },
+            success: function(result, request) {
+
+                // Get  data from the json object result                    
+                for(index = 0;index <result.list.length;index++ ){
+				
+					path = result.list[index].path.toString();
+					file = path.substr('/apps/云端记事本/'.length, path.length);                                        
+					title = file.substr(0,file.length-'.txt'.length);                                       
+                                        
+					second = result.list[index].mtime                                       
+					date = new Date();
+					date.setFullYear(1970,1,1);
+					date.setTime(0);
+					date.setMilliseconds(second*1000);
+
+					noteId = (date.getTime()).toString(); //+ (this.getRandomInt(0, 100)).toString();                                       
+											
+					Ext.Ajax.request({
+						url: 'http://127.0.0.1/WebNoteDemo/download.php',
+						method: 'GET',
+						disableCaching: false,
+													
+						params: {
+							access_token : access_token,
+							method: 'download',
+							title: title,
+							noteid: noteId,
+							path: '/apps/云端记事本/'+title+".txt"
+						},
+
+						success: function(response) {
+														
+							console.log("start"+title +"---"+noteId); 
+							var result = response.responseText;  
+							var json = eval("(" + result + ")");                                                  
+							
+							narrative = json.content;
+							
+							noteId = json.noteid;
+							title = json.title;
+														
+	//                      console.log(narrative);
+
+							var noteRecord = Ext.create("NotesApp.model.Note", {
+									 id: noteId,
+									 flag: 0,
+									 dateCreated: date,
+									 title: title,
+									 narrative: narrative
+								});                                               
+						
+							 if (null == notesStore.findRecord('id',noteId)) {
+									notesStore.add(noteRecord);
+									console.log("123213123"+title); 
+									console.log(narrative);
+								} 
+
+							notesStore.sync();
+						   
+							notesStore.sort([{property: 'dateCreated', direction: 'DESC'}]);   
+						}
+					});                            
+							   
+				}                                                       
+			}
+		});                    		
+		
+	},
     
-    
+    onRefreshNoteCommand: function(){
+   
+		this.refreshNoteList();
+   
+    },
+	
+	
     onLoginNoteCommand: function(){
         
         console.log("onLoginNoteCommand");
@@ -62,93 +153,92 @@ Ext.define("NotesApp.controller.Notes", {
 			status:true
 		});
 				   			
-                connect.login(function(info){
-                        access_token = info.session.access_token;//get access_token
-                        
-                        //store access_token 
-                        var tokenStore = Ext.getStore("Tokens");
-                        tokenStore.add({token:access_token});
-                        tokenStore.sync();
-                        
-          
-                        Ext.data.JsonP.request({
-                                url: 'https://pcs.baidu.com/rest/2.0/pcs/file',
-                                callbackKey: 'callback',
-                                params: {
-                                        access_token : access_token,
-                                        method: 'list',
-                                        path: '/apps/云端记事本'
-                                },
-                                success: function(result, request) {
+		connect.login(function(info){
+			access_token = info.session.access_token;//get access_token
+			
+			//store access_token 
+			var tokenStore = Ext.getStore("Tokens");
+			tokenStore.add({token:access_token});
+			tokenStore.sync();
+			
+			Ext.data.JsonP.request({
+				url: 'https://pcs.baidu.com/rest/2.0/pcs/file',
+				callbackKey: 'callback',
+				params: {
+						access_token : access_token,
+						method: 'list',
+						path: '/apps/云端记事本'
+				},
+				success: function(result, request) {
 
-                                    // Get  data from the json object result                    
-                                    for(index = 0;index <result.list.length;index++ ){
-                                        path = result.list[index].path.toString();
-                                        file = path.substr('/apps/云端记事本/'.length, path.length);                                        
-                                        title = file.substr(0,file.length-'.txt'.length);                                       
-                                        
-                                        second = result.list[index].mtime                                       
-                                        date = new Date();
-                                        date.setFullYear(1970,1,1);
-                                        date.setTime(0);
-                                        date.setMilliseconds(second*1000);
+					// Get  data from the json object result                    
+					for(index = 0;index <result.list.length;index++ ){
+						path = result.list[index].path.toString();
+						file = path.substr('/apps/云端记事本/'.length, path.length);                                        
+						title = file.substr(0,file.length-'.txt'.length);                                       
+						
+						second = result.list[index].mtime                                       
+						date = new Date();
+						date.setFullYear(1970,1,1);
+						date.setTime(0);
+						date.setMilliseconds(second*1000);
 
-                                        noteId = (date.getTime()).toString(); //+ (this.getRandomInt(0, 100)).toString();                                       
-                                        
-                                        Ext.Ajax.request({
-                                                url: 'http://127.0.0.1/WebNoteDemo/download.php',
-                                                method: 'GET',
-                                                disableCaching: false,
-                                                
-                                                params: {
-                                                        access_token : access_token,
-                                                        method: 'download',
-                                                        title: title,
-                                                        noteid: noteId,
-                                                        path: '/apps/云端记事本/'+title+".txt"
-                                                },
+						noteId = (date.getTime()).toString(); //+ (this.getRandomInt(0, 100)).toString();                                       
+						
+						Ext.Ajax.request({
+							url: 'http://127.0.0.1/WebNoteDemo/download.php',
+							method: 'GET',
+							disableCaching: false,
+							
+							params: {
+								access_token : access_token,
+								method: 'download',
+								title: title,
+								noteid: noteId,
+								path: '/apps/云端记事本/'+title+".txt"
+							},
 
-                                                success: function(response) {
-                                                    
-                                                    console.log("start"+title +"---"+noteId); 
-                                                    var result = response.responseText;  
-                                                    var json = eval("(" + result + ")");                                                  
-                                                    
-                                                    narrative = json.content;
-                                                    
-                                                    noteId = json.noteid;
-                                                    title = json.title;
-                                                    
- //                                                   console.log(narrative);
- 
-                                                    var noteRecord = Ext.create("NotesApp.model.Note", {
-                                                             id: noteId,
-                                                             flag: 0,
-                                                             dateCreated: date,
-                                                             title: title,
-                                                             narrative: narrative
-                                                        });                                               
-                                                
-                                                     if (null == notesStore.findRecord('id',noteId)) {
-                                                            notesStore.add(noteRecord);
-                                                            console.log("123213123"+title); 
-                                                            console.log(narrative);
-                                                        } 
+							success: function(response) {
+								
+								console.log("start"+title +"---"+noteId); 
+								var result = response.responseText;  
+								var json = eval("(" + result + ")");                                                  
+								
+								narrative = json.content;
+								
+								noteId = json.noteid;
+								title = json.title;
+								
+//                                                   console.log(narrative);
 
-                                                    notesStore.sync();
-                                                   
-                                                    notesStore.sort([{property: 'dateCreated', direction: 'DESC'}]);   
-                                                }
-                                            });                            
-                                                           
-                                    }                                                       
-                                }
-                        });                                      
+								var noteRecord = Ext.create("NotesApp.model.Note", {
+									 id: noteId,
+									 flag: 0,
+									 dateCreated: date,
+									 title: title,
+									 narrative: narrative
+								});                                               
+							
+								 if (null == notesStore.findRecord('id',noteId)) {
+										notesStore.add(noteRecord);
+										console.log("123213123"+title); 
+										console.log(narrative);
+									} 
+
+								notesStore.sync();							   
+								notesStore.sort([{property: 'dateCreated', direction: 'DESC'}]);   
+							}
+						});                            
+										   
+						}                                                       
+					}
+				});                                      
                        
 		});
 	});
         this.activateNotesList();
     },
+	
     // Commands.
     onNewNoteCommand: function () {
 
@@ -173,11 +263,11 @@ Ext.define("NotesApp.controller.Notes", {
         console.log("onEditNoteCommand");
         
         var now = new Date();
-        var noteId = (now.getTime()).toString() + (this.getRandomInt(0, 100)).toString();
+        var noteId = (now.getTime()).toString();
         
-        record.set("id",noteId);
-        record.set("dateCreated",now);
-        record.set("flag",1);
+        // record.set("id",noteId);
+        // record.set("dateCreated",now);
+        record.set("flag",1); 
 
         this.activateNoteEditor(record);
     },

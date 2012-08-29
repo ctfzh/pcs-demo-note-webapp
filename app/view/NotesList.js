@@ -14,6 +14,12 @@ Ext.define("NotesApp.view.NotesList", {
             title: '云端记事本',
 
             items: [
+				{   
+					xtype: "button",
+                    text: '刷新',
+                    ui: 'action',
+                    itemId: "refreshButton"
+				},
                 { xtype: 'spacer' },
                 {
                     xtype: "button",
@@ -32,7 +38,12 @@ Ext.define("NotesApp.view.NotesList", {
             grouped: true,
             itemTpl: "<div class=\"list-item-title\">{title}</div><div class=\"list-item-narrative\">{narrative}</div>"       
         }],
-        listeners: [{
+        listeners: [
+		{
+            delegate: "#refreshButton",
+            event: "tap",
+            fn: "onRefreshButtonTap"
+        }, {
             delegate: "#newButton",
             event: "tap",
             fn: "onNewButtonTap"
@@ -41,7 +52,13 @@ Ext.define("NotesApp.view.NotesList", {
             event: "disclose",
             fn: "onNotesListDisclose"
         }]
-    },    
+    }, 
+
+    onRefreshButtonTap: function () {
+        console.log("refreshNoteCommand");
+        this.fireEvent("refreshNoteCommand", this);
+    },
+	
     onNewButtonTap: function () {
         console.log("newNoteCommand");
         this.fireEvent("newNoteCommand", this);
